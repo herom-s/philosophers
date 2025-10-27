@@ -1,0 +1,21 @@
+# Compile flags
+compile_flags.txt
+
+# Object files
+*.o
+obj/
+
+# Executable
+philo
+
+# Libraries
+*.a
+
+# System files
+.DS_Store
+*~
+*.swp
+
+# Editor files
+.vscode/
+.idea/
