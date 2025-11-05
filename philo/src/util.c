@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 15:52:28 by hermarti          #+#    #+#             */
-/*   Updated: 2025/10/27 18:56:00 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/10/28 16:51:00 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,29 @@ long	ft_atol(char *nptr)
 {
 	long	sign;
 	long	n;
+
+	n = 0;
+	sign = 1;
+	while (ft_isspace(*nptr))
+		nptr++;
+	if (*nptr == '-' || *nptr == '+')
+	{
+		if (*nptr == '-')
+			sign = -1;
+		nptr++;
+	}
+	while (ft_isdigit(*nptr))
+	{
+		n = n * 10 + (*nptr - '0');
+		nptr++;
+	}
+	return (n * sign);
+}
+
+int	ft_atoi(char *nptr)
+{
+	int	sign;
+	int	n;
 
 	n = 0;
 	sign = 1;

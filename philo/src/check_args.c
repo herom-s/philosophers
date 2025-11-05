@@ -6,11 +6,12 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 18:40:32 by hermarti          #+#    #+#             */
-/*   Updated: 2025/10/27 18:52:08 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/11/03 16:56:04 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+#include <limits.h>
 
 static int	check_overflow_neg_zero(char *str_num)
 {

@@ -6,7 +6,7 @@
 #    By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/27 14:38:13 by hermarti          #+#    #+#              #
-#    Updated: 2025/10/27 18:59:33 by hermarti         ###   ########.fr        #
+#    Updated: 2025/11/03 18:37:38 by hermarti         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,12 @@ NAME = philo
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
+
+DEBUG ?= 0
+ifeq ($(DEBUG), 1)
+	CFLAGS += -g2 -O0 -fsanitize=leak
+endif
+
 INCLUDES = -I./inc
 
 SRC_DIR = src
@@ -21,9 +27,15 @@ OBJ_DIR = obj
 INC_DIR = inc
 
 SRC_FILES = main.c \
-			util.c \
+			env.c \
+			fork.c \
+			philo.c \
+			waiter.c \
+			philo_life.c \
+			check_args.c \
 			error.c \
-			check_args.c
+			util.c \
+			util2.c
 
 SRC = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

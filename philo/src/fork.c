@@ -1,34 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   fork.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/27 14:36:21 by hermarti          #+#    #+#             */
-/*   Updated: 2025/11/03 19:28:52 by hermarti         ###   ########.fr       */
+/*   Created: 2025/10/28 15:36:49 by hermarti          #+#    #+#             */
+/*   Updated: 2025/10/28 15:36:52 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 #include <stdlib.h>
-#include <sys/time.h>
+#include <string.h>
 
-int	main(int argc, char *argv[])
+t_fork	*create_fork(int fork_id)
 {
-	int		i;
-	t_env	env;
+	t_fork	*new;
 
-	i = 0;
-	if (check_args(argc, argv))
-		return (print_error("Error\n"));
-	init_env(&env, argc, argv);
-	init_env_threads(&env);
-	while (i < env.num_philos - 1)
+	new = malloc(sizeof(t_fork));
+	if (!new)
+		return (NULL);
+	memset(new, 0, sizeof(t_fork));
+	new->fork_id = fork_id;
+	if (pthread_mutex_init(&new->fork_mutex, NULL) != 0)
 	{
-		pthread_join(env.philos[i]->philo_thread, NULL);
-		i++;
+		free(new);
+		return (NULL);
 	}
-	clean_env(&env);
-	return (EXIT_SUCCESS);
+	return (new);
+}
+
+void	*destroy_fork(t_fork *fork)
+{
+	if (!fork)
+		return (NULL);
+	pthread_mutex_destroy(&fork->fork_mutex);
+	free(fork);
+	return (NULL);
 }
