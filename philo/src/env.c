@@ -13,6 +13,7 @@
 #include "philo.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include <sys/time.h>
 
 void	set_env_vars(t_env *env, int argc, char *argv[])

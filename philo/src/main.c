@@ -19,7 +19,6 @@ int	main(int argc, char *argv[])
 	int		i;
 	t_env	env;
 
-	i = 0;
 	if (check_args(argc, argv))
 		return (print_error("Error\n"));
 	init_env(&env, argc, argv);
@@ -30,11 +29,9 @@ int	main(int argc, char *argv[])
 		return (print_error("Error: waiter thread creation failed\n"));
 	}
 	init_env_threads(&env);
+	i = 0;
 	while (i < env.num_philos)
-	{
-		pthread_join(env.philos[i]->philo_thread, NULL);
-		i++;
-	}
+		pthread_join(env.philos[i++]->philo_thread, NULL);
 	pthread_join(env.waiter->waiter_thread, NULL);
 	clean_env(&env);
 	return (EXIT_SUCCESS);

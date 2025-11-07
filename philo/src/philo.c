@@ -12,9 +12,9 @@
 
 #include "philo.h"
 #include <pthread.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 t_philo	*create_philo(int philo_id)
 {
@@ -54,13 +54,9 @@ int	create_philo_thread(t_philo *philo)
 void	print_philo_msg(t_env *env, t_philo *philo, char *msg)
 {
 	int	elapsed;
-	int	should_print;
 
 	pthread_mutex_lock(&env->print_mutex);
-	pthread_mutex_lock(&env->waiter->any_death_check_mutex);
-	should_print = !env->waiter->someone_died;
-	pthread_mutex_unlock(&env->waiter->any_death_check_mutex);
-	if (should_print)
+	if (!ask_waiter_someone_died(env))
 	{
 		elapsed = get_elapsed_time(env->start_time);
 		printf("%d %d %s\n", elapsed, philo->philo_id + 1, msg);

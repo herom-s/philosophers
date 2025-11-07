@@ -48,25 +48,7 @@ long	ft_atol(char *nptr)
 
 int	ft_atoi(char *nptr)
 {
-	int	sign;
-	int	n;
-
-	n = 0;
-	sign = 1;
-	while (ft_isspace(*nptr))
-		nptr++;
-	if (*nptr == '-' || *nptr == '+')
-	{
-		if (*nptr == '-')
-			sign = -1;
-		nptr++;
-	}
-	while (ft_isdigit(*nptr))
-	{
-		n = n * 10 + (*nptr - '0');
-		nptr++;
-	}
-	return (n * sign);
+	return ((int)ft_atol(nptr));
 }
 
 int	ft_strlen(char *str)
@@ -74,10 +56,7 @@ int	ft_strlen(char *str)
 	int	i;
 
 	i = 0;
-	while (*str)
-	{
-		str++;
+	while (str[i])
 		i++;
-	}
 	return (i);
 }
