@@ -26,7 +26,6 @@ typedef enum e_fork_type
 typedef struct s_fork
 {
 	int					fork_id;
-	int					is_taken;
 	pthread_mutex_t		fork_mutex;
 }						t_fork;
 
@@ -43,8 +42,17 @@ typedef struct s_philo
 	int					has_right_fork;
 	int					eat_count;
 	struct timeval		time_last_eat;
-	pthread_mutex_t		philo_mutex;
+	pthread_mutex_t		time_mutex;
 }						t_philo;
+
+typedef struct s_waiter
+{
+	pthread_t			waiter_thread;
+	int					someone_died;
+	int					continue_serving;
+	pthread_mutex_t		any_death_check_mutex;
+	pthread_mutex_t		serving_check_mutex;
+}						t_waiter;
 
 typedef struct s_env
 {
@@ -55,6 +63,7 @@ typedef struct s_env
 	int					num_eat_times_philo;
 	t_fork				**forks;
 	t_philo				**philos;
+	t_waiter			*waiter;
 	pthread_mutex_t		print_mutex;
 	struct timeval		start_time;
 }						t_env;
@@ -77,10 +86,15 @@ int						get_elapsed_time(struct timeval start_time);
 t_fork					*create_fork(int fork_id);
 void					*destroy_fork(t_fork *fork);
 
+t_waiter				*create_waiter(void);
+void					*destroy_waiter(t_waiter *waiter);
+void					*waiter_check_philos(void *arg);
+void					waiter_give_philo_forks(t_env *env);
 int						ask_waiter_for_fork(t_env *env, t_philo *philo,
 							t_fork_type fork_type);
 void					give_waiter_fork(t_env *env, t_philo *philo,
 							t_fork_type fork_type);
+int						ask_waiter_someone_died(t_env *env);
 
 int						check_args(int argc, char *argv[]);
 

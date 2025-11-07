@@ -13,6 +13,7 @@
 #include "philo.h"
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 
 void	set_env_vars(t_env *env, int argc, char *argv[])
 {
@@ -57,6 +58,14 @@ int	set_env_forks(t_env *env)
 	return (0);
 }
 
+int	set_env_waiter(t_env *env)
+{
+	env->waiter = create_waiter();
+	if (!env->waiter)
+		return (-1);
+	return (0);
+}
+
 void	init_env(t_env *env, int argc, char *argv[])
 {
 	memset(env, 0, sizeof(t_env));
@@ -68,6 +77,8 @@ void	init_env(t_env *env, int argc, char *argv[])
 		print_error("Error: philos creation error");
 	if (set_env_forks(env))
 		print_error("Error: forks creation error");
+	if (set_env_waiter(env))
+		print_error("Error: waiter creation error");
 }
 
 void	init_env_threads(t_env *env)
@@ -102,8 +113,7 @@ void	destroy_env_forks(t_env *env)
 	i = 0;
 	while (i < env->num_philos)
 	{
-		if (env->forks[i])
-			free(env->forks[i]);
+		destroy_fork(env->forks[i]);
 		i++;
 	}
 	free(env->forks);
@@ -113,5 +123,6 @@ void	clean_env(t_env *env)
 {
 	destroy_env_philos(env);
 	destroy_env_forks(env);
+	destroy_waiter(env->waiter);
 	pthread_mutex_destroy(&env->print_mutex);
 }

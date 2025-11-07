@@ -23,12 +23,19 @@ int	main(int argc, char *argv[])
 	if (check_args(argc, argv))
 		return (print_error("Error\n"));
 	init_env(&env, argc, argv);
+	if (pthread_create(&env.waiter->waiter_thread, NULL, waiter_check_philos,
+			&env) != 0)
+	{
+		clean_env(&env);
+		return (print_error("Error: waiter thread creation failed\n"));
+	}
 	init_env_threads(&env);
-	while (i < env.num_philos - 1)
+	while (i < env.num_philos)
 	{
 		pthread_join(env.philos[i]->philo_thread, NULL);
 		i++;
 	}
+	pthread_join(env.waiter->waiter_thread, NULL);
 	clean_env(&env);
 	return (EXIT_SUCCESS);
 }

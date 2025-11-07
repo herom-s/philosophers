@@ -14,7 +14,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+#include <stdio.h>
 
 t_philo	*create_philo(int philo_id)
 {
@@ -26,7 +26,7 @@ t_philo	*create_philo(int philo_id)
 	memset(new, 0, sizeof(t_philo));
 	new->philo_id = philo_id;
 	gettimeofday(&new->time_last_eat, NULL);
-	if (pthread_mutex_init(&new->philo_mutex, NULL) != 0)
+	if (pthread_mutex_init(&new->time_mutex, NULL) != 0)
 	{
 		free(new);
 		return (NULL);
@@ -41,7 +41,7 @@ void	destroy_philo(void *philo)
 	if (!philo)
 		return ;
 	p = (t_philo *)philo;
-	pthread_mutex_destroy(&p->philo_mutex);
+	pthread_mutex_destroy(&p->time_mutex);
 	free(p);
 }
 
@@ -53,19 +53,17 @@ int	create_philo_thread(t_philo *philo)
 
 void	print_philo_msg(t_env *env, t_philo *philo, char *msg)
 {
-	char	*time_str;
-	char	*philo_id_str;
+	int	elapsed;
+	int	should_print;
 
-	time_str = ft_itoa(get_elapsed_time(env->start_time));
-	philo_id_str = ft_itoa(philo->philo_id + 1);
 	pthread_mutex_lock(&env->print_mutex);
-	write(1, time_str, ft_strlen(time_str));
-	write(1, " ", 1);
-	write(1, philo_id_str, ft_strlen(philo_id_str));
-	write(1, " ", 1);
-	write(1, msg, ft_strlen(msg));
-	write(1, "\n", 1);
+	pthread_mutex_lock(&env->waiter->any_death_check_mutex);
+	should_print = !env->waiter->someone_died;
+	pthread_mutex_unlock(&env->waiter->any_death_check_mutex);
+	if (should_print)
+	{
+		elapsed = get_elapsed_time(env->start_time);
+		printf("%d %d %s\n", elapsed, philo->philo_id + 1, msg);
+	}
 	pthread_mutex_unlock(&env->print_mutex);
-	free(time_str);
-	free(philo_id_str);
 }

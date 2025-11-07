@@ -11,98 +11,97 @@
 /* ************************************************************************** */
 
 #include "philo.h"
+#include <pthread.h>
 #include <sys/time.h>
 #include <unistd.h>
 
 void	philo_eat(t_env *env, t_philo *philo)
 {
-	if (philo_is_dead(env, philo))
-		return ;
-	philo->is_eating = 1;
 	print_philo_msg(env, philo, "is eating");
-	usleep(env->eat_time * 1000);
+	pthread_mutex_lock(&philo->time_mutex);
 	gettimeofday(&philo->time_last_eat, NULL);
-	philo->is_eating = 0;
+	pthread_mutex_unlock(&philo->time_mutex);
+	usleep(env->eat_time * 1000);
+	pthread_mutex_lock(&philo->time_mutex);
 	philo->eat_count++;
-	if (philo_is_dead(env, philo))
-		return ;
+	pthread_mutex_unlock(&philo->time_mutex);
 }
 
 void	philo_think(t_env *env, t_philo *philo)
 {
-	if (philo_is_dead(env, philo))
-		return ;
-	philo->is_thinking = 1;
 	print_philo_msg(env, philo, "is thinking");
-	philo->is_thinking = 0;
-	if (philo_is_dead(env, philo))
-		return ;
 }
 
 void	philo_sleep(t_env *env, t_philo *philo)
 {
-	if (philo_is_dead(env, philo))
-		return ;
-	philo->is_sleeping = 1;
 	print_philo_msg(env, philo, "is sleeping");
 	usleep(env->sleep_time * 1000);
-	philo->is_sleeping = 0;
-	if (philo_is_dead(env, philo))
-		return ;
 }
-
-int	philo_is_dead(t_env *env, t_philo *philo)
-{
-	if (get_elapsed_time(philo->time_last_eat) > env->death_time)
-	{
-		philo->is_dead = 1;
-		return (1);
-	}
-	return (0);
-}
-
-#include <stdio.h>
 
 void	*philo_life(void *arg)
 {
-	t_env	*env;
-	t_philo	*philo;
+	t_env *env;
+	t_philo *philo;
+	int first_fork;
+	int second_fork;
 
 	philo = (t_philo *)arg;
 	env = philo->env;
+	pthread_mutex_lock(&philo->time_mutex);
 	gettimeofday(&philo->time_last_eat, NULL);
-	while (!philo_is_dead(env, philo))
+	pthread_mutex_unlock(&philo->time_mutex);
+
+	if (env->num_philos == 1)
 	{
-		while (!philo->has_left_fork)
-		{
-			if (ask_waiter_for_fork(philo->env, philo, LEFT_FORK) < 0)
-				break ;
-			else
-			{
-				print_philo_msg(env, philo, "has taken a fork");
-				break ;
-			}
-		}
-		while (!philo->has_right_fork)
-		{
-			if (ask_waiter_for_fork(philo->env, philo, RIGHT_FORK) < 0)
-				break ;
-			else
-			{
-				print_philo_msg(env, philo, "has taken a fork");
-				break ;
-			}
-		}
-		philo_eat(env, philo);
-		give_waiter_fork(env, philo, LEFT_FORK);
-		give_waiter_fork(env, philo, RIGHT_FORK);
-		if (env->num_eat_times_philo > 0
-			&& philo->eat_count >= env->num_eat_times_philo)
+		print_philo_msg(env, philo, "has taken a fork");
+		usleep(env->death_time * 1000);
+		return (NULL);
+	}
+
+	if (philo->philo_id % 2 == 0)
+	{
+		first_fork = LEFT_FORK;
+		second_fork = RIGHT_FORK;
+	}
+	else
+	{
+		first_fork = RIGHT_FORK;
+		second_fork = LEFT_FORK;
+	}
+
+	if (philo->philo_id % 2 == 1)
+		usleep(env->eat_time * 500);
+
+	while (!ask_waiter_someone_died(env))
+	{
+		if (ask_waiter_for_fork(env, philo, first_fork) < 0)
 			break ;
+		print_philo_msg(env, philo, "has taken a fork");
+
+		if (ask_waiter_for_fork(env, philo, second_fork) < 0)
+		{
+			give_waiter_fork(env, philo, first_fork);
+			break ;
+		}
+		print_philo_msg(env, philo, "has taken a fork");
+
+		philo_eat(env, philo);
+		give_waiter_fork(env, philo, first_fork);
+		give_waiter_fork(env, philo, second_fork);
+
+		if (env->num_eat_times_philo > 0)
+		{
+			pthread_mutex_lock(&philo->time_mutex);
+			if (philo->eat_count >= env->num_eat_times_philo)
+			{
+				pthread_mutex_unlock(&philo->time_mutex);
+				break ;
+			}
+			pthread_mutex_unlock(&philo->time_mutex);
+		}
+
 		philo_sleep(env, philo);
 		philo_think(env, philo);
 	}
-	if (philo->is_dead)
-		print_philo_msg(env, philo, "died");
 	return (NULL);
 }
