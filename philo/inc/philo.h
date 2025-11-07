@@ -34,12 +34,6 @@ typedef struct s_philo
 	t_env				*env;
 	int					philo_id;
 	pthread_t			philo_thread;
-	int					is_eating;
-	int					is_sleeping;
-	int					is_thinking;
-	int					is_dead;
-	int					has_left_fork;
-	int					has_right_fork;
 	int					eat_count;
 	struct timeval		time_last_eat;
 	pthread_mutex_t		time_mutex;
