@@ -6,7 +6,7 @@
 #    By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/27 14:38:13 by hermarti          #+#    #+#              #
-#    Updated: 2025/11/03 18:37:38 by hermarti         ###   ########.fr        #
+#    Updated: 2025/11/07 20:36:13 by hermarti         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,11 +27,16 @@ OBJ_DIR = obj
 INC_DIR = inc
 
 SRC_FILES = main.c \
-			env.c \
+			env_init.c \
+			env_init2.c \
+			env_destroy.c \
 			fork.c \
 			philo.c \
 			waiter.c \
+			waiter_create.c \
+			waiter_util.c \
 			philo_life.c \
+			philo_life2.c \
 			check_args.c \
 			error.c \
 			util.c \

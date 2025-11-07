@@ -6,7 +6,7 @@
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 16:11:01 by hermarti          #+#    #+#             */
-/*   Updated: 2025/11/03 19:28:22 by hermarti         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:36:38 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,9 @@ t_philo					*create_philo(int philo_id);
 void					destroy_philo(void *philo);
 int						create_philo_thread(t_philo *philo);
 
+void					philo_eat(t_env *env, t_philo *philo);
+void					philo_think(t_env *env, t_philo *philo);
+void					philo_sleep(t_env *env, t_philo *philo);
 void					*philo_life(void *arg);
 int						philo_is_dead(t_env *env, t_philo *philo);
 void					print_philo_msg(t_env *env, t_philo *philo, char *msg);
@@ -89,6 +92,7 @@ int						ask_waiter_for_fork(t_env *env, t_philo *philo,
 void					give_waiter_fork(t_env *env, t_philo *philo,
 							t_fork_type fork_type);
 int						ask_waiter_someone_died(t_env *env);
+int						check_all_philos_done(t_env *env);
 
 int						check_args(int argc, char *argv[]);
 

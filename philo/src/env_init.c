@@ -1,19 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   env_set.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hermarti <hermarti@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/28 14:34:12 by hermarti          #+#    #+#             */
-/*   Updated: 2025/11/03 19:27:40 by hermarti         ###   ########.fr       */
+/*   Created: 2025/11/07 20:23:46 by hermarti          #+#    #+#             */
+/*   Updated: 2025/11/07 20:25:27 by hermarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include <sys/time.h>
 
 void	set_env_vars(t_env *env, int argc, char *argv[])
@@ -80,50 +79,4 @@ void	init_env(t_env *env, int argc, char *argv[])
 		print_error("Error: forks creation error");
 	if (set_env_waiter(env))
 		print_error("Error: waiter creation error");
-}
-
-void	init_env_threads(t_env *env)
-{
-	int	i;
-
-	i = 0;
-	while (i < env->num_philos)
-	{
-		create_philo_thread(env->philos[i]);
-		i++;
-	}
-}
-
-void	destroy_env_philos(t_env *env)
-{
-	int	i;
-
-	i = 0;
-	while (i < env->num_philos)
-	{
-		destroy_philo(env->philos[i]);
-		i++;
-	}
-	free(env->philos);
-}
-
-void	destroy_env_forks(t_env *env)
-{
-	int	i;
-
-	i = 0;
-	while (i < env->num_philos)
-	{
-		destroy_fork(env->forks[i]);
-		i++;
-	}
-	free(env->forks);
-}
-
-void	clean_env(t_env *env)
-{
-	destroy_env_philos(env);
-	destroy_env_forks(env);
-	destroy_waiter(env->waiter);
-	pthread_mutex_destroy(&env->print_mutex);
 }
