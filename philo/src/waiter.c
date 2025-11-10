@@ -82,6 +82,7 @@ void	*waiter_check_philos(void *arg)
 			stop_serving(env->waiter);
 			return (NULL);
 		}
+		usleep(100);
 	}
 	return (NULL);
 }

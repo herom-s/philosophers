@@ -76,7 +76,7 @@ void	*philo_life(void *arg)
 	init_philo_life(philo, &first_fork, &second_fork);
 	if (env->num_philos == 1)
 		return (handle_single_philo(env, philo), NULL);
-	if (philo->philo_id % 2 == 1 && env->num_philos % 2 == 1)
+	if (philo->philo_id % 2 == 0)
 		usleep(env->eat_time * 500);
 	while (!ask_waiter_someone_died(env))
 	{
